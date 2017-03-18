@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DataBase</title>
+	<meta charset="utf-8">
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	 <link rel="stylesheet" href="style.css">
+	 <script type="text/javascript" src="Database.js"></script>
+	<!-- <script type="text/javascript" src="script.js"></script> -->
+	
+
+</head>
+<body>
+	<nav id="table_select">
+		<h3>Chose Table:</h3>
+		<ul >
+			<a href="#test1"><li>Test 1</li></a>
+			<a href="#test2"><li>Test 2</li></a>
+			<a href="#test3"><li>Test 2</li></a>
+		</ul>
+		<button class="btn">Add new..</button>
+	</nav>
+	<section class="data_container" id="data_show" style="display: none">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>datatype</th>
+						<th>datatype</th>
+						<th>datatype</th>
+						<th>datatype</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>test 1</td>
+						<td>test 2</td>
+						<td>test 3</td>
+						<td>test 3</td>
+					</tr>
+				</tbody>
+			</table>
+	</section>
+<form>
+	<section class="data_container" id="data_createDB" style="display: none">
+		
+			<table class="table">
+				<tr>
+					<td>Table Name:</td>
+					<td><input type="text" required/></td>
+				</tr>
+				<tr>
+					<th colspan="2" style="text-align: center;">Column Name</th>
+				</tr>
+				<tr>
+					<td colspan="2" ><input class="form-control" type="text" required></td>
+				</tr>
+				<tr>
+					<td colspan="2" ><input class="form-control" type="text" ></td>
+				</tr>
+				<tr>
+					<td colspan="2" id="addNew">Add next column..</td>
+				</tr>
+				<tr>
+					<td colspan="2"><button type="submit" class="btn btn-primary">Add Table</button></td>
+				</tr>
+			</table>
+	</section>
+</form>
+	<section class="alert">
+		
+	</section>
+</body>
+</html>

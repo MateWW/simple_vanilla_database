@@ -1,0 +1,10 @@
+{
+	"tableList":["tablename1","tablename2"],
+	"tablename1":{
+		"tableKeys":["key1","key2"],
+		"values":[
+			["key1value","key2value"],
+			["key1value","key2value"]
+		]
+	}
+}
