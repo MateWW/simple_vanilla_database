@@ -11,6 +11,10 @@
 	9. Pobranie listy tabel <-- Funkcja zewnętrzna
 	10. Pobieranie listy kluczy tabeli <-- Funkcja zewnętrzna
 	11. Pobieranie danych z tabeli <-- Funkcja zewnętrzna
+	12. Usówanie tabeli
+	13. Wykrycie zmiany wartości tableList
+	14. Usówanie klucza tablicy
+
 	
 	funkcje Tabeli
 	100. Tworzenie tabeli
@@ -19,6 +23,8 @@
 	103. Pobieranie listy kluczy tablicy
 	104. Tworzenie tabeli
 	105. Dodawanie wartości do tabeli
+	106. Pobieranie wartości z tabeli
+	107. Usówanie klucza tabeli
 
 	Funkcje pomocnicze
 	200. Raport błędów
@@ -27,7 +33,7 @@
 
 */
 
-(function(window){
+(function(window, undefined){
 
 	window.Database = function(name){
 
@@ -50,7 +56,81 @@
 		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
 		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
 		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-	}	
+		this.removeTableKey("tablename2","hej");
+	}
+
+	// 14. Usówanie klucza tabeli
+
+	Database.prototype.removeTableKey = function(tablename,key){
+
+		if(typeof key !== "string"){
+			this.reportError("removeTableKey","Klucz nie jest poprawnym typem danych")
+			return false;
+		}
+
+		var tableExistence = this.isTableExist(tablename);
+
+		if(tableExistence === true){
+
+			try{
+				if(this.data[tablename].removeKey(key))
+					return true;
+			}catch(e){
+				this.reportError("removeTableKey catch block",e.message);
+			}
+			return false;
+		}
+		else if (tableExistence === false){
+			this.reportError("removeTableKey","Tabela nie istnieje : "+tablename);
+			return false;
+		}
+		this.reportError("removeTableKey","Wystąpił nieoczekiwany błąd");
+		return false;
+
+	}
+
+
+	// 13. Wykrycie zmiany wartości tableList
+
+	Database.prototype.TableListChange = function(){
+		if(typeof this.onTableListChange ==="function")
+		{
+			var list = this.getTableList();
+			if(list)
+				this.onTableListChange(list);
+		}
+
+	}
+
+	// 12. Usówanie tabeli
+
+	Database.prototype.removeTable = function(tablename){
+
+		var tableExistence = this.isTableExist(tablename);
+
+		if(tableExistence === true)
+		{
+			this.data.tableList = this.deleteTableElemen(this.data.tableList,tablename);
+			delete this.data[tablename];
+
+			if(this.isTableExist(tablename)===false){
+				this.SaveLocalStorage(this.dbName);
+			}
+
+			this.TableListChange();
+			return true;
+		}
+		else if(tableExistence === false){
+
+			this.reportError("removeTable","Podana tabela nie istnieje : "+tablename);
+			return false;
+		}
+
+		this.reportError("removeTable","Wystąpił nieoczekiwany błąd");
+		return false;
+
+	}
+
 
 	// 9. Pobranie listy tabel
 
@@ -154,6 +234,7 @@
 			if(this.data[tablename]===undefined)
 			{
 				this.data.tableList = this.deleteTableElemen(this.data.tableList,tablename);
+				this.TableListChange();
 				return false;
 			}
 			return true;
@@ -223,6 +304,7 @@
 		try{
 			this.data[tablename] = new Table(keys,this.reportError);
 			this.data.tableList.push(tablename);
+			this.TableListChange();
 			this.SaveLocalStorage(this.dbName);
 			return true;
 		}catch(e){
@@ -433,6 +515,33 @@
 
 	}
 
+	// 107. Usówanie klucza tabeli
+
+	Table.prototype.removeKey = function(key){
+
+		if(key.trim()==""){
+			this.report("Table removeKey","Nie podano wartości klucza");
+			return false;
+		}
+
+		var index = this.data.tableKeys.indexOf(key),
+			del = Database.prototype.deleteTableElemen;
+
+		if(index <0)
+		{
+			this.report("Table removeKey","Tabela nie posiada takiego klucza");
+			return false;
+		}
+
+		this.data.tableKeys = del(this.data.tableKeys,key);
+
+		this.data.values.forEach(function(e){
+			e.splice(index,1);
+		});
+
+		this.verifydata();
+	}
+
 	// 104. Tworzenie tabeli
 
 	Table.prototype.createTable = function(){
@@ -621,7 +730,7 @@
 
 var db = new Database("databasetest");
 
-console.log(db.getTableValues(db.getTableList()[1],{
+console.log(db.getTableValues(db.getTableList()[0],{
 	id:1,
 	limit:5
 }));
