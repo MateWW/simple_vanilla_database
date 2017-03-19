@@ -8,3 +8,9 @@
 		]
 	}
 }
+
+{
+	select : ["key1","key2"] || "all",
+	id: 1,   // 1 = array[0]
+	limit: 1 || "all"
+}

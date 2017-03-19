@@ -4,7 +4,13 @@
 	2. Dekoduje dane pobrane z bazy
 	3. Zapisywanie BD
 	4. Preparowanie danych do zapisu
-	5. Tworzenie Tabeli
+	5. Tworzenie Tabeli  <-- Funkcja zewnętrzna
+	6. Dodawanie wartości do tabeli <-- Funkcja zewnętrzna
+	7. Sprawdzenie czy tabela istnieje 
+	8. Tworzenie pustej bazydanych 
+	9. Pobranie listy tabel <-- Funkcja zewnętrzna
+	10. Pobieranie listy kluczy tabeli <-- Funkcja zewnętrzna
+	11. Pobieranie danych z tabeli <-- Funkcja zewnętrzna
 	
 	funkcje Tabeli
 	100. Tworzenie tabeli
@@ -12,10 +18,12 @@
 	102. Przygotowanie tabeli do zapisu
 	103. Pobieranie listy kluczy tablicy
 	104. Tworzenie tabeli
+	105. Dodawanie wartości do tabeli
 
 	Funkcje pomocnicze
 	200. Raport błędów
-
+	201. Usówanie elementu tabeli
+	202. Rozszerzanie obiektu JSON
 
 */
 
@@ -33,32 +41,195 @@
 
 		if(this.supported)
 			this.LoadLocalStorage(name);
+		else
+			this.createDataBase();
 
 		this.createTable("tablename2",["imie","nazwisko","hej"]);
+		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
 	}	
+
+	// 9. Pobranie listy tabel
+
+	Database.prototype.getTableList = function(){
+		if(!(this.data.tableList instanceof Array))
+			return false;
+
+		return this.data.tableList;
+
+	}
+
+
+	// 10. Pobieranie listy kluczy tabeli
+
+	Database.prototype.getTableKeys = function(tablename){
+
+		var tableExistence = this.isTableExist(tablename);
+
+		if(tableExistence === true)
+		{	
+
+			var keys = this.data[tablename].getKeyList();
+			if(!keys)
+			{
+				this.reportError("getTableKeys", "W tabeli nie ma obiektu kluczy");
+				return keys;
+			}
+			else if(keys.length==0){
+				this.reportError("getTableKeys", "W tabeli nie ma jeszcze kluczy")
+				return false;
+			}
+
+			return keys;
+
+			
+		}else if(tableExistence === false)
+		{
+			this.reportError("getTableKeys", "Wybrana tabela nie istnieje : "+tablename);
+			return false;
+		}
+		this.reportError("getTableKeys", "Wystąpił nieoczekiwany błąd");
+		return false;
+	}
+
+	// 11. Pobieranie danych z tabeli
+
+	Database.prototype.getTableValues = function(tablename,config){
+
+		var tableExistence =  this.isTableExist(tablename),
+			defconf = {
+				select : "all",
+				id: 1,
+				limit: "all"
+			};
+
+		if(tableExistence === true)
+		{	
+			this.jsonExtend(defconf, config);
+
+			var data = this.data[tablename].getValues(defconf);
+
+			if(!data)
+				return false;
+			
+			return data;
+		}
+		else if(tableExistence === false)
+		{
+			this.reportError("getTableValues", "Wybrana tabela nie istnieje : "+tablename);
+			return false;
+		}
+		this.reportError("getTableValues", "Wystąpił nieoczekiwany błąd");
+		return false;
+	}
+
+	// 8. Tworzenie pustej bazydanych
+
+	Database.prototype.createDataBase =  function(){
+		this.data={
+			tableList:[]
+		}	
+	
+	}
+
+
+	// 7. Sprawdzenie czy tabela istnieje
+
+	Database.prototype.isTableExist = function(tablename){
+
+		if(this.data === undefined)	{
+			this.reportError("isTableExist","Brak kontenera danych");
+			return -1;
+		}
+		if(typeof tablename !== "string")
+		{
+			this.reportError("isTableExist","Nazwa tabeli nie jest wymaganym typem danych[String]");
+			return -1;
+		}
+		if(this.data.tableList.indexOf(tablename)>=0)
+		{
+			if(this.data[tablename]===undefined)
+			{
+				this.data.tableList = this.deleteTableElemen(this.data.tableList,tablename);
+				return false;
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+
+	// 6. Dodawanie wartości do tabeli
+
+	Database.prototype.addTableValues = function(tablename,values){
+
+
+		var tableExistence = this.isTableExist(tablename);
+
+		if( tableExistence === true ){
+
+			if(typeof values !== "string" && !(values instanceof Array))
+			{
+				this.reportError("addTableValues","Podano błędne dane");
+				return false;
+			}
+			if(!this.data[tablename].addValues(values))
+				return false;
+			else
+			{	
+				this.SaveLocalStorage(this.dbName);
+				return true;
+			}
+
+		} else if( tableExistence === false ) {
+			this.reportError("addTableValues", "Tabela o takiej nazwie nie istnieje");
+		} else{
+			this.reportError("addTableValues", "Wystąpił nieoczekiwany błąd");
+		}
+
+		return false;
+	
+	}
+
+
 
 	// 5. Tworzenie Tabeli
 
 	Database.prototype.createTable = function(tablename,keys){
 
-		if(this.data.tableList.indexOf(tablename)>=0){
-			this.reportError("createTable", "Tabela o nazwie "+tablename+" już istnieje");
-			return;
-		}
+		// if(typeof tablename !== "string")
+		// {
+		// 	this.reportError("createTable", "Nazwa tabeli jest nie jest wymaganym typem danych[String]");
+		// 	return;
+		// }
 
-		if(typeof tablename !== "string")
-		{
-			this.reportError("createTable", "Nazwa tabeli jest nie jest wymaganym typem danych[String]");
-			return;
+		// if(this.data.tableList.indexOf(tablename)>=0){
+		// 	this.reportError("createTable", "Tabela o nazwie "+tablename+" już istnieje");
+		// 	return;
+		// }
+
+		if(this.isTableExist(tablename)){
+
+			this.reportError("createTable", "Tabela o nazwie "+tablename+" już istnieje");
+		 	return false;		 	
 		}
+		
 
 		try{
 			this.data[tablename] = new Table(keys,this.reportError);
 			this.data.tableList.push(tablename);
 			this.SaveLocalStorage(this.dbName);
+			return true;
 		}catch(e){
 			this.reportError("createTable catch block", e);
+			return false;
 		}
+	
 	}
 
 	// 3. Zapisywanie BD
@@ -95,8 +266,8 @@
 	// 4. Preparowanie danych do zapisu
 	
 	Database.prototype.prepareData = function(){
-
-		var data= this.data;
+		var data= Object.create(this.data);
+		data.tableList = this.data.tableList;
 
 		if(!(data.tableList instanceof Array))
 		{
@@ -108,7 +279,7 @@
 		{
 			return JSON.stringify({tableList:[]});
 		}
-
+		
 		data.tableList.forEach(function(element){
 
 			if(data[element] === undefined)
@@ -132,6 +303,7 @@
 
 		}.bind(this));
 
+
 		return data;
 	}
 
@@ -144,10 +316,7 @@
 			this.decodeDatas(localStorage[key]);
 			return ;
 		}
-
-		this.data={
-			tableList:[]
-		}	
+		this.createDataBase();
 	}
 
 	// 2. Dekoduje dane pobrane z bazy
@@ -209,6 +378,28 @@
 			});
 	}
 
+	// 202. Rozszerzanie obiektu JSON
+
+	Database.prototype.jsonExtend = function(obj){
+
+		var extendedObj = obj;
+
+		[].forEach.call(arguments,function(e){
+
+			if(e==obj)
+				return;
+
+			if(typeof e !== "object")
+				return
+			
+			for(var key in extendedObj){
+				extendedObj[key]=e[key]||extendedObj[key];
+			}
+
+		});
+
+		return extendedObj;
+	}
 
 
 
@@ -299,12 +490,121 @@
 
 	}
 
+	// 106. Pobieranie wartości z tabeli
 
+	Table.prototype.getValues = function(conf){
+
+		if( typeof conf !== "object" ){
+			this.report("Table getValues","Podano niewłaściwy config");
+			return false;
+		}
+		if( this.data.values.length == 0 )
+		{
+			this.report("Table getValues","W tabeli nie ma żadnych danych");
+			return false;
+		}
+		if( conf.limit === 0 )
+		{
+			this.report("Table getValues","Podany limit to 0");
+			return false;
+		}
+		if( conf.id > this.data.values.length )
+		{	
+			this.report("Table getValues","Identyfikator początkowy jest większy niż liczba dostępnych logów");
+			return false;
+		}
+
+		var indexes = new Array(),
+			id= conf.id,
+			limit = conf.limit ==="all" ? this.data.values.length : conf.limit,
+			returnObj = new Array();
+
+		if( (id-1) + limit > this.data.values.length){
+			limit = this.data.values.length - (id-1);
+		}
+
+		if(typeof conf.select === "string"){
+
+			if(conf.select === "all")
+				indexes = false;
+
+		}
+		else if(conf.select instanceof Array){
+
+			if(conf.select.length==0){
+				this.report("Table getValues","Brak wybranych kluczy w tabeli");
+				return false;
+			}
+
+			conf.select.forEach(function(e){
+
+				var index = this.data.tableKeys.indexOf(e);
+
+				if(index<0){
+					this.report("Table getValues","Podany klucz nie istnieje : "+e);
+					return;
+				}
+
+				indexes.push(index);
+
+			}.bind(this));
+
+			if(indexes.length == 0){
+				this.report("Table getValues","Żaden z podanych kluczy nie został znaleziony");
+				return false;
+			}
+		}
+
+		for(var i=id-1;i<(id-1+limit);i++)
+		{
+
+			if(indexes===false)
+			{
+				returnObj.push(this.data.values[i]);
+				continue;
+			}
+
+			var temporaryArray = new Array();
+
+			indexes.forEach(function(e){
+
+				temporaryArray.push(this.data.values[i][e]);
+
+			}.bind(this));
+
+			returnObj.push(temporaryArray);
+
+		}
+
+		return returnObj;
+
+	}
+
+
+	// 105. Dodawanie wartości do tabeli
+
+	Table.prototype.addValues = function(values){
+
+		var len = (typeof values === "string")? 1:values.length;
+
+		if(len != this.data.tableKeys.length)
+		{
+			this.report("Table addValues","Ilość podanych wartości nie zgadza się z ilością kluczy");
+			return false;
+		}
+
+		if(typeof values === "string")
+			this.data.values.push([values]);
+		else 
+			this.data.values.push(values);
+
+		return true;
+	}
 
 	// 103.Pobieranie listy kluczy tablicy
 
 	Table.prototype.getKeyList = function(){
-		return this.data.tableKeys;
+		return this.data.tableKeys || false;
 	}
 
 	// 102. Przygotowanie tabeli do zapisu
@@ -317,4 +617,11 @@
 
 
 })(window);
-new Database("databasetest");
+
+
+var db = new Database("databasetest");
+
+console.log(db.getTableValues(db.getTableList()[1],{
+	id:1,
+	limit:5
+}));
