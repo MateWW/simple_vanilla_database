@@ -12,8 +12,10 @@
 	10. Pobieranie listy kluczy tabeli <-- Funkcja zewnętrzna
 	11. Pobieranie danych z tabeli <-- Funkcja zewnętrzna
 	12. Usówanie tabeli
-	13. Wykrycie zmiany wartości tableList
+	13. Wykrycie zmiany wartości tableList <-- event element.onTableListChange
 	14. Usówanie klucza tablicy
+	15. Usównanie wartości tabeli
+	16. Wykrycie zmiany indeksu wartości tabeli <-- event element.onTableValuesIndexChange
 
 	
 	funkcje Tabeli
@@ -25,6 +27,7 @@
 	105. Dodawanie wartości do tabeli
 	106. Pobieranie wartości z tabeli
 	107. Usówanie klucza tabeli
+	108. Usówanie wartości z tabeli
 
 	Funkcje pomocnicze
 	200. Raport błędów
@@ -35,7 +38,7 @@
 
 (function(window, undefined){
 
-	window.Database = function(name){
+	window.Database = function(name,loadedFn){
 
 		if(!(this instanceof window.Database))
 		{
@@ -50,13 +53,54 @@
 		else
 			this.createDataBase();
 
-		this.createTable("tablename2",["imie","nazwisko","hej"]);
-		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-		this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
-		this.removeTableKey("tablename2","hej");
+		// this.createTable("tablename2",["imie","nazwisko","hej"]);
+		// this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		// this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		// this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		// this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		// this.addTableValues("tablename2",["Mateusz","Wit","hej"]);
+		// this.removeTableKey("tablename2","hej");
+	}
+
+
+	// 16. Wykrycie zmiany indeksu wartości tabeli
+
+	Database.prototype.changeValuesIndex = function(tablename){
+
+		if(typeof this.onTableValuesIndexChange === "function"){
+			this.onTableValuesIndexChange(tablename);
+			return true;
+		}
+
+	}
+
+
+	// 15. Usównanie wartości tabeli
+
+	Database.prototype.removeTableValue = function(tablename,id){
+		if(typeof id !== "number" || id<0){
+
+			this.reportError("removeTableValue","Identyfikator jest nieprawidłowy");
+			return false;
+		}
+
+
+		var tableExistence = this.isTableExist(tablename);
+
+		if(tableExistence === true)
+		{
+			if(this.data[tablename].removeValue(id)){
+				this.changeValuesIndex(tablename);
+				return true;
+			}
+			return false;
+		}
+		else if (tableExistence === false){
+			this.reportError("removeTableValue","Tabela nie istnieje : "+tablename);
+			return false;
+		}
+		this.reportError("removeTableKey","Wystąpił nieoczekiwany błąd");
+		return false;
 	}
 
 	// 14. Usówanie klucza tabeli
@@ -212,7 +256,7 @@
 		this.data={
 			tableList:[]
 		}	
-	
+		this.SaveLocalStorage(this.dbName);
 	}
 
 
@@ -264,6 +308,7 @@
 			else
 			{	
 				this.SaveLocalStorage(this.dbName);
+				this.changeValuesIndex(tablename);
 				return true;
 			}
 
@@ -299,7 +344,10 @@
 			this.reportError("createTable", "Tabela o nazwie "+tablename+" już istnieje");
 		 	return false;		 	
 		}
-		
+		if(keys === undefined){
+			this.reportError("createTable","Nie podano kluczy");
+			return false;
+		}
 
 		try{
 			this.data[tablename] = new Table(keys,this.reportError);
@@ -340,8 +388,8 @@
 			this.reportError("SaveLocalStorage", "Nieudało sie spreparować danych do zapisu");
 			return;
 		}
-
-		localStorage.setItem(key+"1",JSON.stringify(data));
+		console.dir( data );
+		localStorage.setItem(key,JSON.stringify(data));
 
 	}
 
@@ -407,6 +455,7 @@
 		var data = JSON.parse(dataString);
 
 		// decodeDatas Sprawdzenie czy lista jest tabelą
+		console.log(typeof data);
 
 		if(!(data.tableList instanceof Array))
 		{
@@ -515,6 +564,25 @@
 
 	}
 
+	// 108. Usówanie wartości z tabeli
+
+	Table.prototype.removeValue = function(id){
+
+		if(!(this.values instanceof Array))
+			return false;
+
+		if(this.values.length <= id){
+			this.report("Table removeValue","Podany identyfikator wykracza poza ilość wartości tablicy");
+			return false;
+		}
+
+		this.values.splice(id);
+
+		return true;
+
+	}
+
+
 	// 107. Usówanie klucza tabeli
 
 	Table.prototype.removeKey = function(key){
@@ -570,7 +638,7 @@
 
 		var data=this.data;
 
-		if(data.tableKeys===undefined)
+		if(data.tableKeys === undefined)
 			throw new Error("Brak zdefiniowanych kluczy tablicy");
 
 		if(!(data.tableKeys instanceof Array ))
@@ -669,12 +737,12 @@
 
 			if(indexes===false)
 			{
-				returnObj.push(this.data.values[i]);
+				returnObj.push([i].concat(this.data.values[i]));
 				continue;
 			}
 
 			var temporaryArray = new Array();
-
+			temporaryArray.push(i);
 			indexes.forEach(function(e){
 
 				temporaryArray.push(this.data.values[i][e]);
@@ -728,9 +796,9 @@
 })(window);
 
 
-var db = new Database("databasetest");
+// var db = new Database("databasetest");
 
-console.log(db.getTableValues(db.getTableList()[0],{
-	id:1,
-	limit:5
-}));
+// console.log(db.getTableValues(db.getTableList()[0],{
+// 	id:1,
+// 	limit:5
+// }));

@@ -1,82 +1,207 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+
+.head-hb{
+	position: fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height: 40px;
+	background-color: #1e62c7;
+	z-index: 9999;
+	box-shadow: 0 4px 11px #434343;
+}
+.head-hb>*{
+	display: inline-block;
+}
+
+
+.head-hb>div.line{
+	margin-top:5px;
+	height: 30px;
+	width:1px;
+	background-color: #5689d5;
+	margin-left: 62px;
+}
+
+.head-hb>p{
+	font-size:22px;
+	color:#ffffff;
+	cursor: pointer;
+	margin:0;
+	position:relative;
+	top:-7px;
+	left:5px;
+}
+
 #table_select{
 	width:20%;
 	height: 100%;
 	position: fixed;
 	left:0;
 	top: 0;
-	background: #bababa;
+	background: #0b48a2;
 	font-size:24px;
-	box-shadow:5px 0 10px #cccccc;
+	transition: all .5s;
 }
-#table_select>h3{
+#table_select.hidden{
+	transform: translateX(-100%);
+}
+#table_select>section{
+	margin-top:40px;
+	position: relative;
+	color:#ffffff;
+	font-size:30px;
+	margin:40px 0 0 0;
+}
+
+
+#table_select>section>h3{
 	box-sizing: border-box;
-	padding:0.5% 5%;
-	color:#181818;
+	font-variant: small-caps;
+	line-height: 0.9;	
+	padding:12.5% 8%;
+	font-size:30px;
+	margin:0;
 }
-		#table_select>ul{
-			list-style: none;
+#table_select>section>ul{
+	list-style: none;
+	margin: 0;
+	padding:0;
+}
+#table_select>section>ul>a{
+	text-decoration: none;
+	color:#ffffff;
+}
+#table_select>section>ul>a>li{
+	box-sizing: border-box;
+	padding: 2% 15%;
+}
+#table_select>section>ul>a>li.selected{
+	background-color: #0a3d88;
+	margin-left:0px;
+	margin-right: -2px;
+}
+#table_select>section>ul>a:hover>li{
+	background-color:#0a3d88;
+	margin-left:0px;
+	margin-right: -2px;
+}
+#table_select>section>button{
+	
+	display: flex;
+	align-items: center;
 
-			padding:0;
-		}
-		#table_select>ul>a{
-			text-decoration: none;
-			color:#181818;
-		}
-		#table_select>ul>a>li{
-			box-sizing: border-box;
-			padding: 2% 15%;
-		}
-		#table_select>ul>a>li.selected{
-			background-color: #5c5c5c;
-		}
-		#table_select>ul>a:hover>li{
-			background-color:#989898;
-		}
-		#table_select>button{
-			position:absolute;
-			top:2%;
-			right:5%;
-			font-weight: bold;
-		}
+	position:absolute;
+	top:18%;
+	right:8%;
 
-		.data_container{
-			width:80%;
-			margin-left:20%;
-		}
-		.data_container>table{
-			width:70%;
-			margin:5% auto;
-		}
-		.alert{
-			position: fixed;
-			bottom:0;
-			width:100%;
-			padding:15px 0;
-			opacity: 0;
+	font-size: 20px;
 
-			text-align: center;
-			margin-bottom: 0;
+	color:#ffffff;
+	background-color:#18ad10;
+	padding: 7px 10px; 
+	border:0;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	transition: all .5s;
+	opacity: 0.8;
+}
+#table_select>section>button:hover{
+	opacity: 1;
+}
+.data_container{
+	width:70%;
+	margin:70px auto;
+	transition: all .5s;
+}
+.data_container.short{
+	margin-left:25%;
+}
+.data_container>table{
+	width:70%;
+	margin:5% auto;
+}
 
-			font-size:20px;
-			color:#ffffff;
-			font-weight: bold;
 
-			transition: opacity .5s;
-		}
-		.info{
-			background-color: #209ded;
-			opacity: 1;
-		}
-		.error{
-			background-color: #8c0000;
-			opacity: 1;
-		}
-		.complete{
-			background-color: #2e9317;
-			opacity: 1;
-		}
+.alert{
+	position: fixed;
+	bottom:0;
+	width:100%;
+	padding:15px 0;
+	opacity: 0;
 
-		#addNew{
-			text-align: center;
-			color:blue;
-		}
+	text-align: center;
+	margin-bottom: 0;
+
+	font-size:20px;
+	color:#ffffff;
+	font-weight: bold;
+
+	transition: opacity .5s;
+}
+.info{
+	background-color: #209ded;
+	opacity: 1;
+}
+.error{
+	background-color: #8c0000;
+	opacity: 1;
+}
+.complete{
+	background-color: #2e9317;
+	opacity: 1;
+}
+
+
+
+#addNew{
+	text-align: center;
+	color:blue;
+}
+
+
+#Chose_DB{
+	position:fixed;
+	left:0;
+	top:0;
+	z-index: 10000;
+	width:100%;
+	height: 100%;
+	background-color: rgba(54,54,54,0.5);
+}
+#Chose_DB>div{
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	background-color: #ffffff;
+
+	width:30%;
+	max-width: 500px;
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%,-50%);
+}
+#Chose_DB>div>hr{
+	width:80%;
+}
+#Chose_DB>div>h1{
+	color: #000000;
+}
+#Chose_DB>div>ul{
+	list-style: none;
+	padding: 0;
+	width:100%;
+}
+#Chose_DB>div>ul>li{
+	width:100%;
+	padding: 2% 0;
+	text-align: center;
+	transition: all .5s;
+	cursor: pointer;
+}
+#Chose_DB>div>ul>li:hover{
+	color:#ffffff;
+	background-color: #000000;
+}

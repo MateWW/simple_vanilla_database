@@ -3,50 +3,73 @@
 <head>
 	<title>DataBase</title>
 	<meta charset="utf-8">
-	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	 <link rel="stylesheet" type="text/css" href="style.css">
 	 <link rel="stylesheet" type="text/css" href="table_style.css">
+	 <link rel="stylesheet" type="text/css" href="hamburger.css">
 	 <script type="text/javascript" src="Database.js"></script>
+	 <script src="https://use.fontawesome.com/0529ad6020.js"></script>
 	 <script  src="https://code.jquery.com/jquery-3.2.0.min.js"
   integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I="
   crossorigin="anonymous"></script>
+  	<script type="text/javascript" src="newScript.js"></script>
 	<!-- <script type="text/javascript" src="script.js"></script> -->
 	
 
 </head>
 <body>
-	<nav>
-		
+	<nav class="head-hb">
+		<div class="hamburger-menu">
+ 			<div class="bar"></div>
+ 		</div>
+ 		<div class="line"></div>
+ 		<p>Database</p>
 	</nav>
-	<nav id="table_select">
-		<h3>Chose Table:</h3>
-		<ul >
-			<a href="#test1"><li>Test 1</li></a>
-			<a href="#test2"><li>Test 2</li></a>
-			<a href="#test3"><li>Test 2</li></a>
-			http://codepen.io/ashblue/pen/mCtuA
-		</ul>
-		<button class="btn">Add new..</button>
+	<nav id="table_select" class="hidden">
+		<section>
+			<h3>Choose table</h3>
+			<ul>
+				<a href="#test1"><li>Test 1</li></a>
+				<a href="#test2"><li>Test 2</li></a>
+				<a href="#test3"><li>Test 2</li></a>
+			</ul>
+			<button class="fa fa-plus"></button>
+		</section>
 	</nav>
-	<section class="data_container" id="data_show" style="display: none">
-			<table class="table">
-				<thead>
-					<tr>
-						<th>datatype</th>
-						<th>datatype</th>
-						<th>datatype</th>
-						<th>datatype</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>test 1</td>
-						<td>test 2</td>
-						<td>test 3</td>
-						<td>test 3</td>
-					</tr>
-				</tbody>
-			</table>
+	
+	<section class="data_container">
+		<div class="tbl-header">
+		<table cellpadding="0" cellspacing="0" border="0">
+		  <thead>
+		    <tr>
+		      <th>Code</th>
+		      <th>Company</th>
+		      <th>Price</th>
+		      <th>Change</th>
+		      <th>Change %</th>
+		    </tr>
+		  </thead>
+		</table>
+		</div>
+		<div class="tbl-content">
+		<table cellpadding="0" cellspacing="0" border="0">
+		  <tbody>
+		    <tr>
+		      <td>AAC</td>
+		      <td>AUSTRALIAN COMPANY </td>
+		      <td>$1.38</td>
+		      <td>+2.01</td>
+		      <td>-0.36%</td>
+		    </tr>
+		    <tr>
+		      <td>AAD</td>
+		      <td>AUSENCO</td>
+		      <td>$2.38</td>
+		      <td>-0.01</td>
+		      <td>-1.36%</td>
+		    </tr>
+		   </tbody>
+		</table>
+		</div>
 	</section>
 <form>
 	<section class="data_container" id="data_createDB" style="display: none">
@@ -74,6 +97,18 @@
 			</table>
 	</section>
 </form>
+
+	<section id="Chose_DB">
+		<div>
+			<h1> Choose a database</h1>
+			<hr>
+			<ul>
+				<li> Database 1</li>
+				<li> Database 2</li>
+				<li> Database 3</li>
+			</ul>
+		</div>
+	</section>
 	<section class="alert">
 		
 	</section>
