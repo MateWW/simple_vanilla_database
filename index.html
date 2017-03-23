@@ -22,30 +22,35 @@
  			<div class="bar"></div>
  		</div>
  		<div class="line"></div>
- 		<p>Database</p>
+ 		<p>Click here to chose datatabase</p>
 	</nav>
 	<nav id="table_select" class="hidden">
 		<section>
 			<h3>Choose table</h3>
 			<ul>
-				<a href="#test1"><li>Test 1</li></a>
-				<a href="#test2"><li>Test 2</li></a>
-				<a href="#test3"><li>Test 2</li></a>
+				<a href="#test1"><li>Test 1<i class="fa fa-ban" aria-hidden="true"></i></li></a>
+				<a href="#test2"><li>Test 2<i class="fa fa-ban" aria-hidden="true"></i></li></a>
+				<a href="#test3"><li>Test 2<i class="fa fa-ban" aria-hidden="true"></i></li></a>
 			</ul>
 			<button class="fa fa-plus"></button>
 		</section>
 	</nav>
 	
-	<section class="data_container">
+	<section class="data_container" id="data_introduce"  style="display: none">
+
+		<h3>Tabela 1</h3>
+		<hr/>
+
+		<nav id="data_settings">
+			<section>Liczba logów : <input type="number" name="logcount" value="30"></section>
+			<section style="display: none">Dodaj klucz do tabeli : <input type="text" name="newKey"> <button type="button">Dodaj</button></section>
+		</nav>
+
+
 		<div class="tbl-header">
 		<table cellpadding="0" cellspacing="0" border="0">
 		  <thead>
 		    <tr>
-		      <th>Code</th>
-		      <th>Company</th>
-		      <th>Price</th>
-		      <th>Change</th>
-		      <th>Change %</th>
 		    </tr>
 		  </thead>
 		</table>
@@ -53,47 +58,53 @@
 		<div class="tbl-content">
 		<table cellpadding="0" cellspacing="0" border="0">
 		  <tbody>
+		   </tbody>
+		</table>
+		</div>
+		<div class="tbl-add">
+			<table cellpadding="0" cellspacing="0" border="0">
+		  <tbody>
 		    <tr>
-		      <td>AAC</td>
-		      <td>AUSTRALIAN COMPANY </td>
-		      <td>$1.38</td>
-		      <td>+2.01</td>
-		      <td>-0.36%</td>
+			    <td></td>
+			    <td>dsadsa</td>
+			    <td>dsadsa</td>
 		    </tr>
-		    <tr>
-		      <td>AAD</td>
-		      <td>AUSENCO</td>
-		      <td>$2.38</td>
-		      <td>-0.01</td>
-		      <td>-1.36%</td>
-		    </tr>
+		   	<tr>
+		   		<td><button>Dodaj nową wartość</button></td>
+		   	</tr>
 		   </tbody>
 		</table>
 		</div>
 	</section>
 <form>
 	<section class="data_container" id="data_createDB" style="display: none">
-		
-			<table class="table">
-				<tr>
-					<td>Table Name:</td>
-					<td><input type="text" required/></td>
-				</tr>
-				<tr>
-					<th colspan="2" style="text-align: center;">Column Name</th>
-				</tr>
-				<tr>
-					<td colspan="2" ><input class="form-control" type="text" required></td>
-				</tr>
-				<tr>
-					<td colspan="2" ><input class="form-control" type="text" ></td>
-				</tr>
-				<tr>
-					<td colspan="2" id="addNew">Add next column..</td>
-				</tr>
-				<tr>
-					<td colspan="2"><button type="submit" class="btn btn-primary">Add Table</button></td>
-				</tr>
+			
+			
+
+			<table>
+				<thead>
+					<tr class="table_name">					
+						<th style="text-align: center;" colspan="2">Table Name: <input type="text" required/></th>
+					</tr>
+					<tr>
+						<th colspan="2" style="text-align: center;">Table Keys</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="2" ><input type="text" required></td>
+					</tr>
+					<tr>
+						<td colspan="2" ><input type="text" ></td>
+					</tr>
+					<tr>
+						<td id="addNew">Add new row..</td>
+						<td id="removeNew">Remove column..</td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" >Add Table</button></td>
+					</tr>
+				</tbody>
 			</table>
 	</section>
 </form>

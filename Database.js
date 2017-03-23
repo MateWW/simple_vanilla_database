@@ -118,7 +118,11 @@
 
 			try{
 				if(this.data[tablename].removeKey(key))
+				{
+					this.changeValuesIndex(tablename);
+					this.SaveLocalStorage(this.dbName);
 					return true;
+				}
 			}catch(e){
 				this.reportError("removeTableKey catch block",e.message);
 			}
@@ -388,7 +392,7 @@
 			this.reportError("SaveLocalStorage", "Nieudało sie spreparować danych do zapisu");
 			return;
 		}
-		console.dir( data );
+
 		localStorage.setItem(key,JSON.stringify(data));
 
 	}
@@ -407,7 +411,7 @@
 
 		if(data.tableList.length==0)
 		{
-			return JSON.stringify({tableList:[]});
+			return {tableList:[]};
 		}
 		
 		data.tableList.forEach(function(element){
@@ -455,7 +459,6 @@
 		var data = JSON.parse(dataString);
 
 		// decodeDatas Sprawdzenie czy lista jest tabelą
-		console.log(typeof data);
 
 		if(!(data.tableList instanceof Array))
 		{
@@ -591,9 +594,14 @@
 			this.report("Table removeKey","Nie podano wartości klucza");
 			return false;
 		}
+		if(this.data.tableKeys.length === 1){
+			this.report("Table removeKey","Nie można usunąć jedynego klucza tablicy");
+			return false;
+		}
 
 		var index = this.data.tableKeys.indexOf(key),
 			del = Database.prototype.deleteTableElemen;
+
 
 		if(index <0)
 		{
@@ -608,6 +616,8 @@
 		});
 
 		this.verifydata();
+
+		return true;
 	}
 
 	// 104. Tworzenie tabeli
